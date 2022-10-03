@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LinkedList
 {
-    public class LinkedList<T> : ICollection<T>, ICollection, IReadOnlyCollection<T>
+    public class LinkedList<T> : ICollection<T>
     {
         #region Properties
         private LinkedListNode<T> head;
@@ -17,8 +17,25 @@ namespace LinkedList
         #endregion
 
         #region Constructors
+
+        public LinkedList()
+        {
+            head = null;
+            tail = null;
+            count = 0;
+        }
+        public LinkedList(IEnumerable<T> collection)
+        {
+            if (collection == null) throw new ArgumentNullException("collection");
+            foreach (T item in collection)
+            {
+                Add(item);
+            }
+        }
+
         public LinkedList(params T[] items)
         {
+            if (items == null) throw new ArgumentNullException("items");
             foreach (var item in items)
             {
                 Add(item);
@@ -33,8 +50,6 @@ namespace LinkedList
 
         public void Add(T item)
         {
-            if (item == null) throw new ArgumentNullException("Item added is null");
-
             LinkedListNode<T> node = new(item);
             if (head == null)
             {
@@ -53,11 +68,11 @@ namespace LinkedList
         {
             head = null;
             tail = null;
+            count = 0;
         }
 
         public bool Contains(T item)
         {
-            if (item == null) throw new ArgumentNullException("got item value null");
             LinkedListNode<T> runner = head;
             while (runner != null)
             {
@@ -70,8 +85,9 @@ namespace LinkedList
         public void CopyTo(T[] array, int index)
         {
             if (head == null) throw new ArgumentNullException();
-            if (array == null) throw new ArgumentNullException();
-            if (array.Length - index < count) throw new ArgumentOutOfRangeException();
+            if (array == null) throw new ArgumentNullException("array");
+            if (index < 0) throw new ArgumentOutOfRangeException("index");
+            if (array.Length - index < count) throw new ArgumentException("index");
 
             LinkedListNode<T> runner = head;
             while (runner != null)
@@ -83,7 +99,6 @@ namespace LinkedList
 
         public bool Remove(T item)
         {
-            if (item == null) throw new ArgumentNullException("got item value null");
             LinkedListNode<T> runner = head;
             while (runner != null)
             {
@@ -91,6 +106,7 @@ namespace LinkedList
                 {
                     runner.Previous.Next = runner.Next;
                     runner.Next.Previous = runner.Previous;
+                    count--;
                     return true;
                 }
                 runner = runner.Next;
@@ -116,18 +132,16 @@ namespace LinkedList
         {
             get
             {
-                if (_syncRoot == null)
-                {
-                    System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
-                }
+                System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
                 return _syncRoot;
             }
         }
         public void CopyTo(Array array, int index)
         {
             if (head == null) throw new ArgumentNullException();
-            if (array == null) throw new ArgumentNullException();
-            if (array.Length - index < count) throw new ArgumentOutOfRangeException();
+            if (array == null) throw new ArgumentNullException("array");
+            if (index < 0) throw new ArgumentOutOfRangeException("index");
+            if (array.Length - index < count) throw new ArgumentException("index");
 
             LinkedListNode<T> runner = head;
             while (runner != null)
@@ -166,19 +180,24 @@ namespace LinkedList
                 pointer.Value = value;
             }
         }
-        public T First()
+        public T First
         {
-            if (head == null) throw new InvalidOperationException();
-            return head.Value;
+            get 
+            {
+                if (head == null) throw new InvalidOperationException();
+                return head.Value;
+            }
         }
-        public T Last()
+        public T Last
         {
-            if (tail == null) throw new InvalidOperationException();
-            return tail.Value;
+            get 
+            {
+                if (tail == null) throw new InvalidOperationException();
+                return tail.Value;
+            }  
         }
         public void AddFirst(T item)
         {
-            if (item == null) throw new ArgumentNullException("item");
             LinkedListNode<T> node = new(item);
             if (head == null)
             {
@@ -191,6 +210,7 @@ namespace LinkedList
                 node.Next = head;
                 head = node;
             }
+            count++;
         }
 
         public void AddFirst(LinkedListNode<T> node)
@@ -207,11 +227,11 @@ namespace LinkedList
                 node.Next = head;
                 head = node;
             }
+            count++;
         }
 
         public void AddLast(T item)
         {
-            if (item == null) throw new ArgumentNullException("item");
             LinkedListNode<T> node = new(item);
             if (head == null)
             {
@@ -224,6 +244,7 @@ namespace LinkedList
                 node.Previous = tail;
                 tail = node;
             }
+            count++;
         }
 
         public void AddLast(LinkedListNode<T> node)
@@ -240,6 +261,7 @@ namespace LinkedList
                 node.Previous = tail;
                 tail = node;
             }
+            count++;
         }
 
         public void AddAfter(LinkedListNode<T> node, LinkedListNode<T> newNode)
@@ -259,6 +281,7 @@ namespace LinkedList
                     newNode.Next = runner.Next;
                     runner.Next = newNode;
                     if (runner == tail) tail = newNode;
+                    count++;
                     return;
                 }
                 runner = runner.Next;
@@ -269,7 +292,6 @@ namespace LinkedList
         public void AddAfter(LinkedListNode<T> node, T newItem)
         {
             if (node == null) throw new ArgumentNullException("node");
-            if (newItem == null) throw new ArgumentNullException("newItem");
             LinkedListNode<T> runner = head;
             LinkedListNode<T> newNode = new(newItem);
             while (runner != null)
@@ -284,6 +306,7 @@ namespace LinkedList
                     newNode.Next = runner.Next;
                     runner.Next = newNode;
                     if (runner == tail) tail = newNode;
+                    count++;
                     return;
                 }
                 runner = runner.Next;
@@ -308,6 +331,7 @@ namespace LinkedList
                     newNode.Next = runner;
                     runner.Previous = newNode;
                     if (runner == head) head = newNode;
+                    count++;
                     return;
                 }
                 runner = runner.Next;
@@ -318,7 +342,6 @@ namespace LinkedList
         public void AddBefore(LinkedListNode<T> node, T newItem)
         {
             if (node == null) throw new ArgumentNullException("node");
-            if (newItem == null) throw new ArgumentNullException("newNode");
             LinkedListNode<T> runner = head;
             LinkedListNode<T> newNode = new(newItem);
             while (runner != null)
@@ -333,10 +356,12 @@ namespace LinkedList
                     newNode.Next = runner;
                     runner.Previous = newNode;
                     if (runner == head) head = newNode;
+                    count++;
                     return;
                 }
                 runner = runner.Next;
             }
+            count++;
         }
 
         public bool RemoveFirst()
@@ -344,6 +369,7 @@ namespace LinkedList
             if (head == null) return false;
             head = head.Next;
             head.Previous = null;
+            count--;
             return true;
         }
         public bool RemoveLast()
@@ -351,12 +377,12 @@ namespace LinkedList
             if (tail == null) return false;
             tail = tail.Previous;
             tail.Next = null;
+            count--;
             return true;
         }
 
         public LinkedListNode<T> Find(T value)
         {
-            if (value == null) throw new ArgumentNullException("got item value null");
             LinkedListNode<T> runner = head;
             while (runner != null)
             {
@@ -370,7 +396,6 @@ namespace LinkedList
         }
         public LinkedListNode<T> FindLast(T value)
         {
-            if (value == null) throw new ArgumentNullException("got item value null");
             LinkedListNode<T> runner = tail;
             while (runner != null)
             {
@@ -384,7 +409,7 @@ namespace LinkedList
         }
         public LinkedListNode<T> Get(int index)
         {
-            if (index < 0 || index >= count) throw new ArgumentOutOfRangeException("Index out of bounds");
+            if (index < 0 || index >= count) throw new ArgumentOutOfRangeException("index");
             LinkedListNode<T> pointer = head;
             for (int i = 0; i < index; i++)
             {
