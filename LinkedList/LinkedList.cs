@@ -50,7 +50,7 @@ namespace LinkedList
 
         public void Add(T item)
         {
-            LinkedListNode<T> node = new(item);
+            LinkedListNode<T> node = new(item, this);
             if (head == null)
             {
                 head = node;
@@ -198,7 +198,7 @@ namespace LinkedList
         }
         public void AddFirst(T item)
         {
-            LinkedListNode<T> node = new(item);
+            LinkedListNode<T> node = new(item, this);
             if (head == null)
             {
                 head = node;
@@ -216,6 +216,8 @@ namespace LinkedList
         public void AddFirst(LinkedListNode<T> node)
         {
             if (node == null) throw new ArgumentNullException("node");
+            if (node.List != null) throw new InvalidOperationException("node");
+            node.List = this;
             if (head == null)
             {
                 head = node;
@@ -232,7 +234,7 @@ namespace LinkedList
 
         public void AddLast(T item)
         {
-            LinkedListNode<T> node = new(item);
+            LinkedListNode<T> node = new(item, this);
             if (head == null)
             {
                 head = node;
@@ -250,6 +252,8 @@ namespace LinkedList
         public void AddLast(LinkedListNode<T> node)
         {
             if (node == null) throw new ArgumentNullException("node");
+            if (node.List != null) throw new InvalidOperationException("node");
+            node.List = this;
             if (head == null)
             {
                 head = node;
@@ -268,7 +272,9 @@ namespace LinkedList
         {
             if (node == null) throw new ArgumentNullException("node");
             if (newNode == null) throw new ArgumentNullException("newNode");
+            if (newNode.List != null) throw new InvalidOperationException("newNode");
             LinkedListNode<T> runner = head;
+            newNode.List = this;
             while (runner != null)
             {
                 if (runner.Equals(node))
@@ -293,7 +299,7 @@ namespace LinkedList
         {
             if (node == null) throw new ArgumentNullException("node");
             LinkedListNode<T> runner = head;
-            LinkedListNode<T> newNode = new(newItem);
+            LinkedListNode<T> newNode = new(newItem, this);
             while (runner != null)
             {
                 if (runner.Equals(node))
@@ -318,6 +324,9 @@ namespace LinkedList
         {
             if (node == null) throw new ArgumentNullException("node");
             if (newNode == null) throw new ArgumentNullException("newNode");
+            if (newNode.List != null) throw new InvalidOperationException("newNode");
+
+            newNode.List = this;
             LinkedListNode<T> runner = head;
             while (runner != null)
             {
@@ -343,7 +352,7 @@ namespace LinkedList
         {
             if (node == null) throw new ArgumentNullException("node");
             LinkedListNode<T> runner = head;
-            LinkedListNode<T> newNode = new(newItem);
+            LinkedListNode<T> newNode = new(newItem, this);
             while (runner != null)
             {
                 if (runner.Equals(node))

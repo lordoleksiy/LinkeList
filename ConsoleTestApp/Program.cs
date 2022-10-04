@@ -7,7 +7,6 @@ namespace ConsoleTestApp
     {
         static void Main(string[] args)
         {
-
             //  Тест ввода:
             LinkedList<int> vs = new(4, 2, 8, 11, 28, 11, 3);
             vs.Add(19);  // 4 2 8 11 28 11 3 19
@@ -52,6 +51,16 @@ namespace ConsoleTestApp
 
             vs.Clear();
             Console.WriteLine("\nCount: " + vs.Count);
+
+            // Тест exceptions:
+            LinkedList<string> testList1 = new("44", "763");
+            LinkedList<string> testList2 = new();
+            LinkedListNode<string> test1 = new("test1");
+
+            //test1.List = testList;
+            //Console.WriteLine(testList2.First);
+            Console.WriteLine(testList1[2]);
+
         }
     }
 }
