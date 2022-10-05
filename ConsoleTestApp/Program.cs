@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using LinkedList;
 
 namespace ConsoleTestApp
@@ -52,15 +53,31 @@ namespace ConsoleTestApp
             vs.Clear();
             Console.WriteLine("\nCount: " + vs.Count);
 
-            // Тест exceptions:
-            LinkedList<string> testList1 = new("44", "763");
-            LinkedList<string> testList2 = new();
-            LinkedListNode<string> test1 = new("test1");
+            // Тест синхронізації потоків:
+            vs = new(4, 2, 43, 12, 43, 1, 2,43);
+            int x = 0;
+            object locker = new();  // объект-заглушка
+                                    // запускаем пять потоков
+            for (int i = 1; i < 6; i++)
+            {
+                Thread myThread = new(Print);
+                myThread.Name = $"Thread {i}";
+                myThread.Start();
+            }
 
-            //test1.List = testList;
-            //Console.WriteLine(testList2.First);
-            Console.WriteLine(testList1[2]);
 
+            void Print()
+            {
+                lock (vs.SyncRoot)
+                {
+                    foreach (int i in vs)
+                    {
+                        Console.Write($"{i*x} ");
+                    }
+                    x++;
+                    Console.WriteLine($" - thread {x}");
+                }
+            }
         }
     }
 }
