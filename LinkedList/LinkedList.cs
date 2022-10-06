@@ -43,6 +43,28 @@ namespace LinkedList
         }
         #endregion
 
+        #region Events
+        public event Action EventAdd = delegate { };
+        public event Action EventRemove = delegate { };
+        public event Action EventClear = delegate { };
+
+        protected virtual void OnAdd()
+        {
+            EventAdd.Invoke();
+        }
+
+        protected virtual void OnRemove()
+        {
+            EventRemove.Invoke();
+        }
+
+        protected virtual void OnClear()
+        {
+            EventClear.Invoke();
+        }
+
+        #endregion
+
         #region ICollection<T>
         public int Count => count;
 
@@ -63,12 +85,14 @@ namespace LinkedList
                 tail = node;
             }
             count++;
+            OnAdd();
         }
         public void Clear()
         {
             head = null;
             tail = null;
             count = 0;
+            OnClear();
         }
 
         public bool Contains(T item)
@@ -107,6 +131,7 @@ namespace LinkedList
                     runner.Previous.Next = runner.Next;
                     runner.Next.Previous = runner.Previous;
                     count--;
+                    OnRemove();
                     return true;
                 }
                 runner = runner.Next;
@@ -132,7 +157,10 @@ namespace LinkedList
         {
             get
             {
-                System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
+                if (_syncRoot == null)
+                {
+                    System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
+                }
                 return _syncRoot;
             }
         }
@@ -211,6 +239,7 @@ namespace LinkedList
                 head = node;
             }
             count++;
+            OnAdd();
         }
 
         public void AddFirst(LinkedListNode<T> node)
@@ -230,6 +259,7 @@ namespace LinkedList
                 head = node;
             }
             count++;
+            OnAdd();
         }
 
         public void AddLast(T item)
@@ -247,6 +277,7 @@ namespace LinkedList
                 tail = node;
             }
             count++;
+            OnAdd();
         }
 
         public void AddLast(LinkedListNode<T> node)
@@ -266,6 +297,7 @@ namespace LinkedList
                 tail = node;
             }
             count++;
+            OnAdd();
         }
 
         public void AddAfter(LinkedListNode<T> node, LinkedListNode<T> newNode)
@@ -288,6 +320,7 @@ namespace LinkedList
                     runner.Next = newNode;
                     if (runner == tail) tail = newNode;
                     count++;
+                    OnAdd();
                     return;
                 }
                 runner = runner.Next;
@@ -313,6 +346,7 @@ namespace LinkedList
                     runner.Next = newNode;
                     if (runner == tail) tail = newNode;
                     count++;
+                    OnAdd();
                     return;
                 }
                 runner = runner.Next;
@@ -341,6 +375,7 @@ namespace LinkedList
                     runner.Previous = newNode;
                     if (runner == head) head = newNode;
                     count++;
+                    OnAdd();
                     return;
                 }
                 runner = runner.Next;
@@ -366,6 +401,7 @@ namespace LinkedList
                     runner.Previous = newNode;
                     if (runner == head) head = newNode;
                     count++;
+                    OnAdd();
                     return;
                 }
                 runner = runner.Next;
@@ -379,6 +415,7 @@ namespace LinkedList
             head = head.Next;
             head.Previous = null;
             count--;
+            OnRemove();
             return true;
         }
         public bool RemoveLast()
@@ -387,6 +424,7 @@ namespace LinkedList
             tail = tail.Previous;
             tail.Next = null;
             count--;
+            OnRemove();
             return true;
         }
 

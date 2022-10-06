@@ -53,7 +53,9 @@ namespace ConsoleTestApp
             vs.Clear();
             Console.WriteLine("\nCount: " + vs.Count);
 
+
             // Тест синхронізації потоків:
+            Console.WriteLine("\nSync Root:");
             vs = new(4, 2, 43, 12, 43, 1, 2,43);
             int x = 0;
             object locker = new();  // объект-заглушка
@@ -78,6 +80,20 @@ namespace ConsoleTestApp
                     Console.WriteLine($" - thread {x}");
                 }
             }
+
+
+            // Тест Events:
+            //Console.WriteLine("\nEvents: ");
+            //void Changed()
+            //{
+            //    Console.WriteLine("The collection is changed!");
+            //}
+            //vs.EventAdd += Changed;
+            //vs.Add(43);
+            //foreach (int i in vs)
+            //{
+            //    Console.Write($"{i * x} ");
+            //}
         }
     }
 }
