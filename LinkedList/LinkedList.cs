@@ -24,14 +24,6 @@ namespace LinkedList
             tail = null;
             count = 0;
         }
-        public LinkedList(IEnumerable<T> collection)
-        {
-            if (collection == null) throw new ArgumentNullException("collection");
-            foreach (T item in collection)
-            {
-                Add(item);
-            }
-        }
 
         public LinkedList(params T[] items)
         {
@@ -97,11 +89,11 @@ namespace LinkedList
 
         public bool Contains(T item)
         {
-            LinkedListNode<T> runner = head;
-            while (runner != null)
+            LinkedListNode<T> curNode = head;
+            while (curNode != null)
             {
-                if (runner.Value.Equals(item)) return true;
-                runner = runner.Next;
+                if (curNode.Value.Equals(item)) return true;
+                curNode = curNode.Next;
             }
             return false;
         }
@@ -113,28 +105,28 @@ namespace LinkedList
             if (index < 0) throw new ArgumentOutOfRangeException("index");
             if (array.Length - index < count) throw new ArgumentException("index");
 
-            LinkedListNode<T> runner = head;
-            while (runner != null)
+            LinkedListNode<T> curNode = head;
+            while (curNode != null)
             {
-                array[index++] = runner.Value;
-                runner = runner.Next;
+                array[index++] = curNode.Value;
+                curNode = curNode.Next;
             }
         }
 
         public bool Remove(T item)
         {
-            LinkedListNode<T> runner = head;
-            while (runner != null)
+            LinkedListNode<T> curNode = head;
+            while (curNode != null)
             {
-                if (runner.Value.Equals(item))
+                if (curNode.Value.Equals(item))
                 {
-                    runner.Previous.Next = runner.Next;
-                    runner.Next.Previous = runner.Previous;
+                    curNode.Previous.Next = curNode.Next;
+                    curNode.Next.Previous = curNode.Previous;
                     count--;
                     OnRemove();
                     return true;
                 }
-                runner = runner.Next;
+                curNode = curNode.Next;
             }
             return false;
         }
@@ -157,10 +149,7 @@ namespace LinkedList
         {
             get
             {
-                if (_syncRoot == null)
-                {
-                    System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
-                }
+                System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
                 return _syncRoot;
             }
         }
@@ -171,11 +160,11 @@ namespace LinkedList
             if (index < 0) throw new ArgumentOutOfRangeException("index");
             if (array.Length - index < count) throw new ArgumentException("index");
 
-            LinkedListNode<T> runner = head;
-            while (runner != null)
+            LinkedListNode<T> curNode = head;
+            while (curNode != null)
             {
-                array.SetValue(runner.Value, index++);
-                runner = runner.Next;
+                array.SetValue(curNode.Value, index++);
+                curNode = curNode.Next;
             }
         }
         IEnumerator IEnumerable.GetEnumerator()
@@ -305,25 +294,25 @@ namespace LinkedList
             if (node == null) throw new ArgumentNullException("node");
             if (newNode == null) throw new ArgumentNullException("newNode");
             if (newNode.List != null) throw new InvalidOperationException("newNode");
-            LinkedListNode<T> runner = head;
+            LinkedListNode<T> curNode = head;
             newNode.List = this;
-            while (runner != null)
+            while (curNode != null)
             {
-                if (runner.Equals(node))
+                if (curNode.Equals(node))
                 {
-                    if (runner.Next != null)
+                    if (curNode.Next != null)
                     {
-                        runner.Next.Previous = newNode;
+                        curNode.Next.Previous = newNode;
                     }
-                    newNode.Previous = runner;
-                    newNode.Next = runner.Next;
-                    runner.Next = newNode;
-                    if (runner == tail) tail = newNode;
+                    newNode.Previous = curNode;
+                    newNode.Next = curNode.Next;
+                    curNode.Next = newNode;
+                    if (curNode == tail) tail = newNode;
                     count++;
                     OnAdd();
                     return;
                 }
-                runner = runner.Next;
+                curNode = curNode.Next;
             }
             throw new InvalidOperationException("No item has been found");
         }
@@ -331,25 +320,25 @@ namespace LinkedList
         public void AddAfter(LinkedListNode<T> node, T newItem)
         {
             if (node == null) throw new ArgumentNullException("node");
-            LinkedListNode<T> runner = head;
+            LinkedListNode<T> curNode = head;
             LinkedListNode<T> newNode = new(newItem, this);
-            while (runner != null)
+            while (curNode != null)
             {
-                if (runner.Equals(node))
+                if (curNode.Equals(node))
                 {
-                    if (runner.Next != null)
+                    if (curNode.Next != null)
                     {
-                        runner.Next.Previous = newNode;
+                        curNode.Next.Previous = newNode;
                     }
-                    newNode.Previous = runner;
-                    newNode.Next = runner.Next;
-                    runner.Next = newNode;
-                    if (runner == tail) tail = newNode;
+                    newNode.Previous = curNode;
+                    newNode.Next = curNode.Next;
+                    curNode.Next = newNode;
+                    if (curNode == tail) tail = newNode;
                     count++;
                     OnAdd();
                     return;
                 }
-                runner = runner.Next;
+                curNode = curNode.Next;
             }
             throw new InvalidOperationException("No item has been found");
         }
@@ -361,24 +350,24 @@ namespace LinkedList
             if (newNode.List != null) throw new InvalidOperationException("newNode");
 
             newNode.List = this;
-            LinkedListNode<T> runner = head;
-            while (runner != null)
+            LinkedListNode<T> curNode = head;
+            while (curNode != null)
             {
-                if (runner.Equals(node))
+                if (curNode.Equals(node))
                 {
-                    if (runner.Previous != null)
+                    if (curNode.Previous != null)
                     {
-                        runner.Previous.Next = newNode;
+                        curNode.Previous.Next = newNode;
                     }
-                    newNode.Previous = runner.Previous;
-                    newNode.Next = runner;
-                    runner.Previous = newNode;
-                    if (runner == head) head = newNode;
+                    newNode.Previous = curNode.Previous;
+                    newNode.Next = curNode;
+                    curNode.Previous = newNode;
+                    if (curNode == head) head = newNode;
                     count++;
                     OnAdd();
                     return;
                 }
-                runner = runner.Next;
+                curNode = curNode.Next;
             }
             throw new InvalidOperationException("No item has been found");
         }
@@ -386,25 +375,25 @@ namespace LinkedList
         public void AddBefore(LinkedListNode<T> node, T newItem)
         {
             if (node == null) throw new ArgumentNullException("node");
-            LinkedListNode<T> runner = head;
+            LinkedListNode<T> curNode = head;
             LinkedListNode<T> newNode = new(newItem, this);
-            while (runner != null)
+            while (curNode != null)
             {
-                if (runner.Equals(node))
+                if (curNode.Equals(node))
                 {
-                    if (runner.Previous != null)
+                    if (curNode.Previous != null)
                     {
-                        runner.Previous.Next = newNode;
+                        curNode.Previous.Next = newNode;
                     }
-                    newNode.Previous = runner.Previous;
-                    newNode.Next = runner;
-                    runner.Previous = newNode;
-                    if (runner == head) head = newNode;
+                    newNode.Previous = curNode.Previous;
+                    newNode.Next = curNode;
+                    curNode.Previous = newNode;
+                    if (curNode == head) head = newNode;
                     count++;
                     OnAdd();
                     return;
                 }
-                runner = runner.Next;
+                curNode = curNode.Next;
             }
             count++;
         }
@@ -430,27 +419,27 @@ namespace LinkedList
 
         public LinkedListNode<T> Find(T value)
         {
-            LinkedListNode<T> runner = head;
-            while (runner != null)
+            LinkedListNode<T> curNode = head;
+            while (curNode != null)
             {
-                if (runner.Value.Equals(value))
+                if (curNode.Value.Equals(value))
                 {
-                    return runner;
+                    return curNode;
                 }
-                runner = runner.Next;
+                curNode = curNode.Next;
             }
             return null;
         }
         public LinkedListNode<T> FindLast(T value)
         {
-            LinkedListNode<T> runner = tail;
-            while (runner != null)
+            LinkedListNode<T> curNode = tail;
+            while (curNode != null)
             {
-                if (runner.Value.Equals(value))
+                if (curNode.Value.Equals(value))
                 {
-                    return runner;
+                    return curNode;
                 }
-                runner = runner.Previous;
+                curNode = curNode.Previous;
             }
             return null;
         }
