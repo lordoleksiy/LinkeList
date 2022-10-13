@@ -104,8 +104,10 @@ namespace LinkedList
 
         public void CopyTo(T[] array, int index)
         {
-            if (head == null || array == null) throw new ArgumentNullException();
-            if (index < 0 || array.Length - index < count) throw new ArgumentOutOfRangeException();
+            if (head == null) throw new ArgumentNullException("collection");
+            if (array == null) throw new ArgumentNullException("array");
+            if (index < 0) throw new ArgumentOutOfRangeException("index below zero");
+            if (array.Length - index < count) throw new ArgumentOutOfRangeException("index higher than count");
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -167,8 +169,10 @@ namespace LinkedList
         }
         public void CopyTo(Array array, int index)
         {
-            if (head == null || array == null) throw new ArgumentNullException();
-            if (index < 0 || array.Length - index < count) throw new ArgumentOutOfRangeException();
+            if (head == null) throw new ArgumentNullException("collection");
+            if (array == null) throw new ArgumentNullException("array");
+            if (index < 0) throw new ArgumentOutOfRangeException("index below zero");
+            if (array.Length - index < count) throw new ArgumentOutOfRangeException("index higher than count");
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -188,25 +192,14 @@ namespace LinkedList
         {
             get
             {
-                if (index < 0 || index >= count) throw new IndexOutOfRangeException();
+                if (index < 0) throw new IndexOutOfRangeException("index below zero");
+                if (index >= count) throw new IndexOutOfRangeException("index higher than count");
                 LinkedListNode<T> pointer = head;
                 for (int i = 0; i < index; i++)
                 {
                     pointer = pointer.Next;
                 }
                 return pointer.Value;
-            }
-            set
-            {
-                if (index < 0 || index >= count) throw new IndexOutOfRangeException();
-                mutex.WaitOne();
-                LinkedListNode<T> pointer = head;
-                for (int i = 0; i < index; i++)
-                {
-                    pointer = pointer.Next;
-                }
-                pointer.Value = value;
-                mutex.ReleaseMutex();
             }
         }
         public T First
@@ -478,7 +471,8 @@ namespace LinkedList
         }
         public LinkedListNode<T> Get(int index)
         {
-            if (index < 0 || index >= count) throw new ArgumentOutOfRangeException();
+            if (index < 0) throw new IndexOutOfRangeException("index below zero");
+            if (index >= count) throw new IndexOutOfRangeException("index higher than count");
             LinkedListNode<T> pointer = head;
             for (int i = 0; i < index; i++)
             {
