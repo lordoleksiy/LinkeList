@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace LinkedList
 {
@@ -14,6 +15,7 @@ namespace LinkedList
         private LinkedListNode<T> tail;
         private int count;
         private object _syncRoot;
+        private readonly Mutex mutex = new();
         #endregion
 
         #region Constructors
@@ -64,6 +66,7 @@ namespace LinkedList
 
         public void Add(T item)
         {
+            mutex.WaitOne();
             LinkedListNode<T> node = new(item, this);
             if (head == null)
             {
@@ -78,6 +81,7 @@ namespace LinkedList
             }
             count++;
             OnAdd();
+            mutex.ReleaseMutex();
         }
         public void Clear()
         {
@@ -100,10 +104,8 @@ namespace LinkedList
 
         public void CopyTo(T[] array, int index)
         {
-            if (head == null) throw new ArgumentNullException();
-            if (array == null) throw new ArgumentNullException("array");
-            if (index < 0) throw new ArgumentOutOfRangeException("index");
-            if (array.Length - index < count) throw new ArgumentException("index");
+            if (head == null || array == null) throw new ArgumentNullException();
+            if (index < 0 || array.Length - index < count) throw new ArgumentOutOfRangeException();
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -115,6 +117,7 @@ namespace LinkedList
 
         public bool Remove(T item)
         {
+            mutex.WaitOne();
             LinkedListNode<T> curNode = head;
             while (curNode != null)
             {
@@ -124,41 +127,48 @@ namespace LinkedList
                     curNode.Next.Previous = curNode.Previous;
                     count--;
                     OnRemove();
+                    mutex.ReleaseMutex();
                     return true;
                 }
                 curNode = curNode.Next;
             }
+            mutex.ReleaseMutex();
             return false;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
+            mutex.WaitOne();
             LinkedListNode<T> current = head;
             while (current != null)
             {
                 yield return current.Value;
                 current = current.Next;
             }
+            mutex.ReleaseMutex();
         }
         #endregion
 
         #region ICollection
-        public bool IsSynchronized => false;
+        public bool IsSynchronized => true;
 
         public object SyncRoot
         {
             get
             {
-                System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
+                mutex.WaitOne();
+                if (_syncRoot == null)
+                {
+                    _syncRoot = new object();
+                }
+                mutex.ReleaseMutex();
                 return _syncRoot;
             }
         }
         public void CopyTo(Array array, int index)
         {
-            if (head == null) throw new ArgumentNullException();
-            if (array == null) throw new ArgumentNullException("array");
-            if (index < 0) throw new ArgumentOutOfRangeException("index");
-            if (array.Length - index < count) throw new ArgumentException("index");
+            if (head == null || array == null) throw new ArgumentNullException();
+            if (index < 0 || array.Length - index < count) throw new ArgumentOutOfRangeException();
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -178,7 +188,7 @@ namespace LinkedList
         {
             get
             {
-                if (index < 0 || index >= count) throw new IndexOutOfRangeException("index");
+                if (index < 0 || index >= count) throw new IndexOutOfRangeException();
                 LinkedListNode<T> pointer = head;
                 for (int i = 0; i < index; i++)
                 {
@@ -188,13 +198,15 @@ namespace LinkedList
             }
             set
             {
-                if (index < 0 || index >= count) throw new IndexOutOfRangeException("index");
+                if (index < 0 || index >= count) throw new IndexOutOfRangeException();
+                mutex.WaitOne();
                 LinkedListNode<T> pointer = head;
                 for (int i = 0; i < index; i++)
                 {
                     pointer = pointer.Next;
                 }
                 pointer.Value = value;
+                mutex.ReleaseMutex();
             }
         }
         public T First
@@ -215,6 +227,7 @@ namespace LinkedList
         }
         public void AddFirst(T item)
         {
+            mutex.WaitOne();
             LinkedListNode<T> node = new(item, this);
             if (head == null)
             {
@@ -229,12 +242,14 @@ namespace LinkedList
             }
             count++;
             OnAdd();
+            mutex.ReleaseMutex();
         }
 
         public void AddFirst(LinkedListNode<T> node)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (node.List != null) throw new InvalidOperationException("node");
+            if (node == null) throw new ArgumentNullException();
+            if (node.List != null) throw new InvalidOperationException();
+            mutex.WaitOne();
             node.List = this;
             if (head == null)
             {
@@ -249,10 +264,12 @@ namespace LinkedList
             }
             count++;
             OnAdd();
+            mutex.ReleaseMutex();
         }
 
         public void AddLast(T item)
         {
+            mutex.WaitOne();
             LinkedListNode<T> node = new(item, this);
             if (head == null)
             {
@@ -267,12 +284,14 @@ namespace LinkedList
             }
             count++;
             OnAdd();
+            mutex.WaitOne();
         }
 
         public void AddLast(LinkedListNode<T> node)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (node.List != null) throw new InvalidOperationException("node");
+            if (node == null) throw new ArgumentNullException();
+            if (node.List != null) throw new InvalidOperationException();
+            mutex.WaitOne();
             node.List = this;
             if (head == null)
             {
@@ -287,13 +306,14 @@ namespace LinkedList
             }
             count++;
             OnAdd();
+            mutex.ReleaseMutex();
         }
 
         public void AddAfter(LinkedListNode<T> node, LinkedListNode<T> newNode)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (newNode == null) throw new ArgumentNullException("newNode");
-            if (newNode.List != null) throw new InvalidOperationException("newNode");
+            if (node == null || newNode == null) throw new ArgumentNullException();
+            if (newNode.List != null) throw new InvalidOperationException();
+            mutex.WaitOne();
             LinkedListNode<T> curNode = head;
             newNode.List = this;
             while (curNode != null)
@@ -310,16 +330,19 @@ namespace LinkedList
                     if (curNode == tail) tail = newNode;
                     count++;
                     OnAdd();
+                    mutex.ReleaseMutex();
                     return;
                 }
                 curNode = curNode.Next;
             }
+            mutex.ReleaseMutex();
             throw new InvalidOperationException("No item has been found");
         }
 
         public void AddAfter(LinkedListNode<T> node, T newItem)
         {
-            if (node == null) throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException();
+            mutex.WaitOne();
             LinkedListNode<T> curNode = head;
             LinkedListNode<T> newNode = new(newItem, this);
             while (curNode != null)
@@ -336,19 +359,20 @@ namespace LinkedList
                     if (curNode == tail) tail = newNode;
                     count++;
                     OnAdd();
+                    mutex.ReleaseMutex();
                     return;
                 }
                 curNode = curNode.Next;
             }
+            mutex.ReleaseMutex();
             throw new InvalidOperationException("No item has been found");
         }
 
         public void AddBefore(LinkedListNode<T> node, LinkedListNode<T> newNode)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (newNode == null) throw new ArgumentNullException("newNode");
-            if (newNode.List != null) throw new InvalidOperationException("newNode");
-
+            if (node == null || newNode == null) throw new ArgumentNullException();
+            if (newNode.List != null) throw new InvalidOperationException();
+            mutex.WaitOne();
             newNode.List = this;
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -365,16 +389,19 @@ namespace LinkedList
                     if (curNode == head) head = newNode;
                     count++;
                     OnAdd();
+                    mutex.ReleaseMutex();
                     return;
                 }
                 curNode = curNode.Next;
             }
+            mutex.ReleaseMutex();
             throw new InvalidOperationException("No item has been found");
         }
 
         public void AddBefore(LinkedListNode<T> node, T newItem)
         {
-            if (node == null) throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException();
+            mutex.WaitOne();
             LinkedListNode<T> curNode = head;
             LinkedListNode<T> newNode = new(newItem, this);
             while (curNode != null)
@@ -391,29 +418,35 @@ namespace LinkedList
                     if (curNode == head) head = newNode;
                     count++;
                     OnAdd();
+                    mutex.ReleaseMutex();
                     return;
                 }
                 curNode = curNode.Next;
             }
-            count++;
+            mutex.ReleaseMutex();
+            throw new InvalidOperationException("No item has been found");
         }
 
         public bool RemoveFirst()
         {
             if (head == null) return false;
+            mutex.WaitOne();
             head = head.Next;
             head.Previous = null;
             count--;
             OnRemove();
+            mutex.ReleaseMutex();
             return true;
         }
         public bool RemoveLast()
         {
             if (tail == null) return false;
+            mutex.WaitOne();
             tail = tail.Previous;
             tail.Next = null;
             count--;
             OnRemove();
+            mutex.ReleaseMutex();
             return true;
         }
 
@@ -445,7 +478,7 @@ namespace LinkedList
         }
         public LinkedListNode<T> Get(int index)
         {
-            if (index < 0 || index >= count) throw new ArgumentOutOfRangeException("index");
+            if (index < 0 || index >= count) throw new ArgumentOutOfRangeException();
             LinkedListNode<T> pointer = head;
             for (int i = 0; i < index; i++)
             {

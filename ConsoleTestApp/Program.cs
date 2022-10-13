@@ -55,11 +55,9 @@ namespace ConsoleTestApp
 
 
             // Тест синхронізації потоків:
-            Console.WriteLine("\nSync Root:");
+            Console.WriteLine("\nAsync test:");
             vs = new(4, 2, 43, 12, 43, 1, 2,43);
             int x = 0;
-            object locker = new();  // объект-заглушка
-                                    // запускаем пять потоков
             for (int i = 1; i < 6; i++)
             {
                 Thread myThread = new(Print);
@@ -70,15 +68,12 @@ namespace ConsoleTestApp
 
             void Print()
             {
-                lock (vs.SyncRoot)
+                foreach (int i in vs)
                 {
-                    foreach (int i in vs)
-                    {
-                        Console.Write($"{i*x} ");
-                    }
-                    x++;
-                    Console.WriteLine($" - thread {x}");
+                    Console.Write($"{i*x} ");
                 }
+                x++;
+                Console.WriteLine($" - thread {x}");
             }
 
 
