@@ -53,11 +53,11 @@ namespace ConsoleTestApp
             vs.Clear();
             Console.WriteLine("\nCount: " + vs.Count);
 
+            vs = new(4, 2, 43, 12, 43, 1, 2, 43);
 
             // Тест синхронізації потоків:
-            Console.WriteLine("\nSync Root:");
-            vs = new(4, 2, 43, 12, 43, 1, 2,43);
             int x = 0;
+            Console.WriteLine("\nSync Root:");
             object locker = new();  // объект-заглушка
                                     // запускаем пять потоков
             for (int i = 1; i < 6; i++)
@@ -74,7 +74,7 @@ namespace ConsoleTestApp
                 {
                     foreach (int i in vs)
                     {
-                        Console.Write($"{i*x} ");
+                        Console.Write($"{i * x} ");
                     }
                     x++;
                     Console.WriteLine($" - thread {x}");
@@ -82,7 +82,7 @@ namespace ConsoleTestApp
             }
 
 
-            // Тест Events:
+            //Тест Events:
             //Console.WriteLine("\nEvents: ");
             //void Changed()
             //{
@@ -92,7 +92,7 @@ namespace ConsoleTestApp
             //vs.Add(43);
             //foreach (int i in vs)
             //{
-            //    Console.Write($"{i * x} ");
+            //    Console.Write($"{i} ");
             //}
         }
     }
