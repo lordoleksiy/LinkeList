@@ -68,12 +68,15 @@ namespace ConsoleTestApp
 
             void Print()
             {
-                foreach (int i in vs)
+                lock (vs.SyncRoot)
                 {
-                    Console.Write($"{i*x} ");
-                }
-                x++;
-                Console.WriteLine($" - thread {x}");
+                    foreach (int i in vs)
+                    {
+                        Console.Write($"{i * x} ");
+                    }
+                    x++;
+                    Console.WriteLine($" - thread {x}");
+                } 
             }
 
 
