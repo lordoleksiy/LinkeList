@@ -54,44 +54,44 @@ namespace ConsoleTestApp
             Console.WriteLine("\nCount: " + vs.Count);
 
 
-            // Тест синхронізації потоків:
-            Console.WriteLine("\nAsync test:");
-            vs = new(4, 2, 43, 12, 43, 1, 2,43);
+            vs = new(4, 2, 43, 12, 43, 1, 2, 43);
             int x = 0;
-            for (int i = 1; i < 6; i++)
-            {
-                Thread myThread = new(Print);
-                myThread.Name = $"Thread {i}";
-                myThread.Start();
-            }
-
-
-            void Print()
-            {
-                lock (vs.SyncRoot)
-                {
-                    foreach (int i in vs)
-                    {
-                        Console.Write($"{i * x} ");
-                    }
-                    x++;
-                    Console.WriteLine($" - thread {x}");
-                } 
-            }
-
-
-            // Тест Events:
-            //Console.WriteLine("\nEvents: ");
-            //void Changed()
+            // Тест синхронізації потоків:
+            //Console.WriteLine("\nAsync test:");
+            //for (int i = 1; i < 6; i++)
             //{
-            //    Console.WriteLine("The collection is changed!");
+            //    Thread myThread = new(Print);
+            //    myThread.Name = $"Thread {i}";
+            //    myThread.Start();
             //}
-            //vs.EventAdd += Changed;
-            //vs.Add(43);
-            //foreach (int i in vs)
+
+
+            //void Print()
             //{
-            //    Console.Write($"{i * x} ");
+            //    lock (vs.SyncRoot)
+            //    {
+            //        foreach (int i in vs)
+            //        {
+            //            Console.Write($"{i * x} ");
+            //        }
+            //        x++;
+            //        Console.WriteLine($" - thread {x}");
+            //    } 
             //}
+
+
+            //Тест Events:
+            Console.WriteLine("\nEvents: ");
+            void Changed()
+            {
+                Console.WriteLine("The collection is changed!");
+            }
+            vs.EventAdd += Changed;
+            vs.Add(43);
+            foreach (int i in vs)
+            {
+                Console.Write($"{i * x} ");
+            }
         }
     }
 }
