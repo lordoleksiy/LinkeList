@@ -55,43 +55,48 @@ namespace ConsoleTestApp
 
 
             vs = new(4, 2, 43, 12, 43, 1, 2, 43);
+
+            //Тест синхронізації потоків:
             int x = 0;
-            // Тест синхронізації потоків:
-            //Console.WriteLine("\nAsync test:");
-            //for (int i = 1; i < 6; i++)
-            //{
-            //    Thread myThread = new(Print);
-            //    myThread.Name = $"Thread {i}";
-            //    myThread.Start();
-            //}
+            Console.WriteLine("\nAsync test:");
+            for (int i = 1; i < 6; i++)
+            {
+                Thread myThread = new(Print);
+                myThread.Name = $"Thread {i}";
+                myThread.Start();
+            }
 
 
-            //void Print()
-            //{
-            //    lock (vs.SyncRoot)
-            //    {
-            //        foreach (int i in vs)
-            //        {
-            //            Console.Write($"{i * x} ");
-            //        }
-            //        x++;
-            //        Console.WriteLine($" - thread {x}");
-            //    } 
-            //}
+            void Print()
+            {
+                lock (vs.SyncRoot)
+                {
+                    foreach (int i in vs)
+                    {
+                        Console.Write($"{i * x} ");
+                    }
+                    x++;
+                    Console.WriteLine($" - thread {x}");
+                }
+            }
 
 
             //Тест Events:
-            Console.WriteLine("\nEvents: ");
-            void Changed()
-            {
-                Console.WriteLine("The collection is changed!");
-            }
-            vs.EventAdd += Changed;
-            vs.Add(43);
-            foreach (int i in vs)
-            {
-                Console.Write($"{i * x} ");
-            }
+            //Console.WriteLine("\nEvents: ");
+            //void Changed()
+            //{
+            //    Console.WriteLine("The collection is changed!");
+            //}
+            //vs.EventAdd += Changed;
+            //vs.EventRemove += Changed;
+            //vs.EventClear += Changed;
+            //vs.Add(43);
+            //vs.RemoveLast();
+            //foreach (int i in vs)
+            //{
+            //    Console.Write($"{i} ");
+            //}
+            //vs.Clear();
         }
     }
 }
