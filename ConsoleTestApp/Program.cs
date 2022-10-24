@@ -17,7 +17,7 @@ namespace ConsoleTestApp
             LinkedListNode<int> node = vs.Find(28);
             vs.AddAfter(node, 16);  // 10 4 2 8 11 28 16 11 3 19 9
             vs.AddBefore(node, 17);     // 10 4 2 8 11 17 28 16 11 3 19 9
-            
+
             LinkedListNode<int> node1 = new(vs[0]);
             vs.AddBefore(vs.FindLast(11), node1);   // 10 4 2 8 11 17 28 16 10 11 3 19 9
             LinkedListNode<int> node2 = new(33);
@@ -53,21 +53,12 @@ namespace ConsoleTestApp
             vs.Clear();
             Console.WriteLine("\nCount: " + vs.Count);
 
-            vs = new(4, 2, 43, 12, 43, 1, 2, 43);
 
-<<<<<<< HEAD
             vs = new(4, 2, 43, 12, 43, 1, 2, 43);
 
             //Тест синхронізації потоків:
             int x = 1;
             Console.WriteLine("\nAsync test:");
-=======
-            // Тест синхронізації потоків:
-            int x = 0;
-            Console.WriteLine("\nSync Root:");
-            object locker = new();  // объект-заглушка
-                                    // запускаем пять потоков
->>>>>>> fa465b30c305af86ad76c9de71ee074e1cbebdd7
             for (int i = 1; i < 6; i++)
             {
                 Thread myThread = new(Print);
