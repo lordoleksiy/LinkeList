@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LinkedList
@@ -100,10 +101,10 @@ namespace LinkedList
 
         public void CopyTo(T[] array, int index)
         {
-            if (head == null) throw new ArgumentNullException();
+            if (head == null) throw new ArgumentNullException("empty collection");
             if (array == null) throw new ArgumentNullException("array");
             if (index < 0) throw new ArgumentOutOfRangeException("index");
-            if (array.Length - index < count) throw new ArgumentException("index");
+            if (array.Length - index < count) throw new ArgumentException("array");
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -149,7 +150,7 @@ namespace LinkedList
         {
             get
             {
-                System.Threading.Interlocked.CompareExchange<Object>(ref _syncRoot, new Object(), null);
+                System.Threading.Interlocked.CompareExchange(ref _syncRoot, new object(), null);
                 return _syncRoot;
             }
         }

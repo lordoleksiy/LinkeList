@@ -57,7 +57,7 @@ namespace ConsoleTestApp
             vs = new(4, 2, 43, 12, 43, 1, 2, 43);
 
             //Тест синхронізації потоків:
-            int x = 0;
+            int x = 1;
             Console.WriteLine("\nAsync test:");
             for (int i = 1; i < 6; i++)
             {
