@@ -30,6 +30,6 @@ namespace LinkedList
         {
             return Value.ToString();
         }
-        
+
     }
 }

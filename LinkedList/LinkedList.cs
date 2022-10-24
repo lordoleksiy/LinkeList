@@ -200,7 +200,7 @@ namespace LinkedList
         }
         public T First
         {
-            get 
+            get
             {
                 if (head == null) throw new InvalidOperationException();
                 return head.Value;
@@ -208,11 +208,11 @@ namespace LinkedList
         }
         public T Last
         {
-            get 
+            get
             {
                 if (tail == null) throw new InvalidOperationException();
                 return tail.Value;
-            }  
+            }
         }
         public void AddFirst(T item)
         {

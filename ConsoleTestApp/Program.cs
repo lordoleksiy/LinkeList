@@ -53,12 +53,21 @@ namespace ConsoleTestApp
             vs.Clear();
             Console.WriteLine("\nCount: " + vs.Count);
 
+            vs = new(4, 2, 43, 12, 43, 1, 2, 43);
 
+<<<<<<< HEAD
             vs = new(4, 2, 43, 12, 43, 1, 2, 43);
 
             //Тест синхронізації потоків:
             int x = 1;
             Console.WriteLine("\nAsync test:");
+=======
+            // Тест синхронізації потоків:
+            int x = 0;
+            Console.WriteLine("\nSync Root:");
+            object locker = new();  // объект-заглушка
+                                    // запускаем пять потоков
+>>>>>>> fa465b30c305af86ad76c9de71ee074e1cbebdd7
             for (int i = 1; i < 6; i++)
             {
                 Thread myThread = new(Print);
