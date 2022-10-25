@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace LinkedList
 {
-    public class LinkedList<T> : ICollection<T>
+    public class LinkedList<T> : ICollection<T>, ICollection
     {
         #region Properties
         private LinkedListNode<T> head;
@@ -37,18 +34,18 @@ namespace LinkedList
         #endregion
 
         #region Events
-        public event Action EventAdd = delegate { };
-        public event Action EventRemove = delegate { };
+        public event Action<LinkedListNode<T>> EventAdd = delegate { };
+        public event Action<LinkedListNode<T>> EventRemove = delegate { };
         public event Action EventClear = delegate { };
 
-        protected virtual void OnAdd()
+        protected virtual void OnAdd(LinkedListNode<T> element)
         {
-            EventAdd.Invoke();
+            EventAdd.Invoke(element);
         }
 
-        protected virtual void OnRemove()
+        protected virtual void OnRemove(LinkedListNode<T> element)
         {
-            EventRemove.Invoke();
+            EventRemove.Invoke(element);
         }
 
         protected virtual void OnClear()
@@ -59,7 +56,6 @@ namespace LinkedList
         #endregion
 
         #region ICollection<T>
-        public int Count => count;
 
         public bool IsReadOnly => false;
 
@@ -78,7 +74,7 @@ namespace LinkedList
                 tail = node;
             }
             count++;
-            OnAdd();
+            OnAdd(node);
         }
         public void Clear()
         {
@@ -121,10 +117,11 @@ namespace LinkedList
             {
                 if (curNode.Value.Equals(item))
                 {
+                    curNode.List = null;
+                    OnRemove(curNode);
                     curNode.Previous.Next = curNode.Next;
                     curNode.Next.Previous = curNode.Previous;
                     count--;
-                    OnRemove();
                     return true;
                 }
                 curNode = curNode.Next;
@@ -141,16 +138,22 @@ namespace LinkedList
                 current = current.Next;
             }
         }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
         #endregion
 
         #region ICollection
+
+        public int Count => count;
         public bool IsSynchronized => false;
 
         public object SyncRoot
         {
             get
             {
-                System.Threading.Interlocked.CompareExchange(ref _syncRoot, new object(), null);
+                Interlocked.CompareExchange(ref _syncRoot, new object(), null);
                 return _syncRoot;
             }
         }
@@ -167,10 +170,6 @@ namespace LinkedList
                 array.SetValue(curNode.Value, index++);
                 curNode = curNode.Next;
             }
-        }
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
         #endregion
 
@@ -229,7 +228,7 @@ namespace LinkedList
                 head = node;
             }
             count++;
-            OnAdd();
+            OnAdd(node);
         }
 
         public void AddFirst(LinkedListNode<T> node)
@@ -249,7 +248,7 @@ namespace LinkedList
                 head = node;
             }
             count++;
-            OnAdd();
+            OnAdd(node);
         }
 
         public void AddLast(T item)
@@ -267,7 +266,7 @@ namespace LinkedList
                 tail = node;
             }
             count++;
-            OnAdd();
+            OnAdd(node);
         }
 
         public void AddLast(LinkedListNode<T> node)
@@ -287,7 +286,7 @@ namespace LinkedList
                 tail = node;
             }
             count++;
-            OnAdd();
+            OnAdd(node);
         }
 
         public void AddAfter(LinkedListNode<T> node, LinkedListNode<T> newNode)
@@ -310,7 +309,7 @@ namespace LinkedList
                     curNode.Next = newNode;
                     if (curNode == tail) tail = newNode;
                     count++;
-                    OnAdd();
+                    OnAdd(newNode);
                     return;
                 }
                 curNode = curNode.Next;
@@ -336,7 +335,7 @@ namespace LinkedList
                     curNode.Next = newNode;
                     if (curNode == tail) tail = newNode;
                     count++;
-                    OnAdd();
+                    OnAdd(newNode);
                     return;
                 }
                 curNode = curNode.Next;
@@ -365,7 +364,7 @@ namespace LinkedList
                     curNode.Previous = newNode;
                     if (curNode == head) head = newNode;
                     count++;
-                    OnAdd();
+                    OnAdd(newNode);
                     return;
                 }
                 curNode = curNode.Next;
@@ -391,7 +390,7 @@ namespace LinkedList
                     curNode.Previous = newNode;
                     if (curNode == head) head = newNode;
                     count++;
-                    OnAdd();
+                    OnAdd(newNode);
                     return;
                 }
                 curNode = curNode.Next;
@@ -402,19 +401,21 @@ namespace LinkedList
         public bool RemoveFirst()
         {
             if (head == null) return false;
+            head.List = null;
+            OnRemove(head);
             head = head.Next;
             head.Previous = null;
             count--;
-            OnRemove();
             return true;
         }
         public bool RemoveLast()
         {
             if (tail == null) return false;
+            tail.List = null;
+            OnRemove(tail);
             tail = tail.Previous;
             tail.Next = null;
             count--;
-            OnRemove();
             return true;
         }
 

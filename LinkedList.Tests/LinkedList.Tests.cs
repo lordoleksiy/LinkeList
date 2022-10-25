@@ -64,15 +64,19 @@ namespace LinkedList.Tests
                 Assert.IsEmpty(list);
             });
         }
+
+
         #endregion
 
-        [Test]
-        public void Add_1ToCollectionAndTestThis()
+        [TestCase(0)]
+        [TestCase(10)]
+        [TestCase(-5)]
+        public void Add_NumToCollectionAndTestThis(int num)
         {
             LinkedList<int> list = new();
-            int expectedNumber = 1;
+            int expectedNumber = num;
 
-            list.Add(1);
+            list.Add(num);
 
             Assert.AreEqual(expectedNumber, list[0]);
 
