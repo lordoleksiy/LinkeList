@@ -13,8 +13,6 @@ namespace ConsoleTestApp
             //someTests();
             //testSyncRoot();
             //testEvents();
-
-
         }
         // input tests
         private static void testInput()

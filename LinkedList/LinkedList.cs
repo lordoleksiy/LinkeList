@@ -119,8 +119,21 @@ namespace LinkedList
                 {
                     curNode.List = null;
                     OnRemove(curNode);
-                    curNode.Previous.Next = curNode.Next;
-                    curNode.Next.Previous = curNode.Previous;
+                    if (curNode.Previous == null)
+                    {
+                        head = head.Next;
+                        head.Previous = null;
+                    }
+                    else
+                    {
+                        curNode.Previous.Next = curNode.Next;
+                    }
+                        
+                    if (curNode.Next != null)
+                    {
+                        curNode.Next.Previous = curNode.Previous;
+                    }
+                        
                     count--;
                     return true;
                 }
