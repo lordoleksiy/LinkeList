@@ -236,8 +236,8 @@ namespace LinkedList
 
         public void AddFirst(LinkedListNode<T> node)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (node.List != null) throw new InvalidOperationException("node");
+            if (node == null) throw new ArgumentNullException("newNode");
+            if (node.List != null) throw new InvalidOperationException("newNode");
             node.List = this;
             if (head == null)
             {
@@ -274,8 +274,8 @@ namespace LinkedList
 
         public void AddLast(LinkedListNode<T> node)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (node.List != null) throw new InvalidOperationException("node");
+            if (node == null) throw new ArgumentNullException("newNode");
+            if (node.List != null) throw new InvalidOperationException("newNode");
             node.List = this;
             if (head == null)
             {
@@ -398,7 +398,7 @@ namespace LinkedList
                 }
                 curNode = curNode.Next;
             }
-            count++;
+            throw new InvalidOperationException("No item has been found");
         }
 
         public bool RemoveFirst()
