@@ -100,7 +100,7 @@ namespace LinkedList
             if (head == null) throw new ArgumentNullException("empty collection");
             if (array == null) throw new ArgumentNullException("array");
             if (index < 0) throw new ArgumentOutOfRangeException("index");
-            if (array.Length - index < count) throw new ArgumentException("array");
+            if (array.Length - index < count) throw new ArgumentOutOfRangeException("array");
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -172,10 +172,10 @@ namespace LinkedList
         }
         public void CopyTo(Array array, int index)
         {
-            if (head == null) throw new ArgumentNullException();
+            if (head == null) throw new ArgumentNullException("empty collection");
             if (array == null) throw new ArgumentNullException("array");
             if (index < 0) throw new ArgumentOutOfRangeException("index");
-            if (array.Length - index < count) throw new ArgumentException("index");
+            if (array.Length - index < count) throw new ArgumentOutOfRangeException("array");
 
             LinkedListNode<T> curNode = head;
             while (curNode != null)
@@ -198,16 +198,6 @@ namespace LinkedList
                     pointer = pointer.Next;
                 }
                 return pointer.Value;
-            }
-            set
-            {
-                if (index < 0 || index >= count) throw new IndexOutOfRangeException("index");
-                LinkedListNode<T> pointer = head;
-                for (int i = 0; i < index; i++)
-                {
-                    pointer = pointer.Next;
-                }
-                pointer.Value = value;
             }
         }
         public T First
