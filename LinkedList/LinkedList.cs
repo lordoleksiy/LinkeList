@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace LinkedList
@@ -89,7 +90,7 @@ namespace LinkedList
             LinkedListNode<T> curNode = head;
             while (curNode != null)
             {
-                if (curNode.Value.Equals(item)) return true;
+                if (Compare(curNode.Value, item)) return true;
                 curNode = curNode.Next;
             }
             return false;
@@ -115,7 +116,7 @@ namespace LinkedList
             LinkedListNode<T> curNode = head;
             while (curNode != null)
             {
-                if (curNode.Value.Equals(item))
+                if (Compare(curNode.Value, item))
                 {
                     curNode.List = null;
                     OnRemove(curNode);
@@ -427,7 +428,7 @@ namespace LinkedList
             LinkedListNode<T> curNode = head;
             while (curNode != null)
             {
-                if (curNode.Value.Equals(value))
+                if (Compare(curNode.Value, value))
                 {
                     return curNode;
                 }
@@ -440,7 +441,7 @@ namespace LinkedList
             LinkedListNode<T> curNode = tail;
             while (curNode != null)
             {
-                if (curNode.Value.Equals(value))
+                if (Compare(curNode.Value, value))
                 {
                     return curNode;
                 }
@@ -457,6 +458,10 @@ namespace LinkedList
                 pointer = pointer.Next;
             }
             return pointer;
+        }
+        private static bool Compare(T item1, T item2)
+        {
+            return EqualityComparer<T>.Default.Equals(item1, item2);
         }
         #endregion
     }

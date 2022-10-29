@@ -25,11 +25,5 @@ namespace LinkedList
             Value = value;
             List = list;
         }
-
-        override public String ToString()
-        {
-            return Value.ToString();
-        }
-
     }
 }
