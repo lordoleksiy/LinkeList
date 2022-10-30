@@ -35,7 +35,7 @@ namespace LinkedList
         #endregion
 
         #region Events
-        public event Action<LinkedListNode<T>> EventAdd = delegate { };
+        public event Action<LinkedListNode<T>> EventAdd = delegate { };  // shall i use EventHandler?
         public event Action<LinkedListNode<T>> EventRemove = delegate { };
         public event Action EventClear = delegate { };
 

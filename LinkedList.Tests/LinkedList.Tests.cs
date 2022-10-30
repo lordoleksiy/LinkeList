@@ -2,6 +2,8 @@ using NUnit.Framework;
 using LinkedList;
 using System;
 using FluentAssertions;
+using System.Collections;
+using Moq;
 
 namespace LinkedList.Tests
 {
@@ -27,6 +29,35 @@ namespace LinkedList.Tests
             act.Should().Throw<ArgumentNullException>()
                 .WithParameterName("items");
         }
+        #endregion
+
+        #region Events
+        [Test]
+        public void EventClear_ClearCollectionAndCheckClearEventIsRaised_EventClearIsRaised()
+        {
+            LinkedList<int> list = new(1, 2, 3);
+            using var monitoredEvent = list.Monitor();
+            ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
+
+            list.EventClear += fakeObject.testNoArgumentEvent;
+            list.Clear();
+
+            monitoredEvent.Should().Raise("EventClear");
+        }
+
+        //[Test]
+        //public void EventAdd_AddNumToCollectionAndMonitorEventIsRaisedAndArgTIsChanged_EventISRaisedArgChanged()
+        //{
+        //    LinkedList<int> list = new();
+        //    using var monitoredEvent = list.Monitor();
+        //    ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
+
+        //    list.EventAdd += fakeObject.testOneArgumentEvent;
+        //    list.Add(2);
+
+        //    monitoredEvent.Should().Raise("EventAdd")
+        //        .WithArgs<ITestEvent<int>.testOneArgumentEvent>(args => args.PropertyName == "element");
+        //}
         #endregion
 
         #region ICollectionT
@@ -158,20 +189,27 @@ namespace LinkedList.Tests
 
             actual.Should().BeFalse();
         }
-        //[Test]
-        //public void GetEnumerator()
-        //{
-        //    int[] expected = { 1, 2, 3, 4, 5 };
-        //    int[] actual = new int[5];
+        [Test]
+        public void GetEnumerator()
+        {
+            LinkedList<int> list = new(4, 2, 5, 3, 5, 1);
 
-        //    IEnumerable weak = list;
+            foreach (int i in list)
+            {
 
-        //    CollectionAssert.AreEqual(sequence,
-        //        new[] { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610 });
+            }
+        }
 
+        [Test]
+        public void IEnumerableGetEnumerator()
+        {
+            LinkedList<int> list = new(4, 2, 5, 3, 5, 1);
+            IEnumerable test = list;
+            
+            foreach (int i in test) { }
 
-        //    actual.Should().BeEquivalentTo(expected);
-        //}
+            
+        }
         #endregion
 
         #region ICollection
