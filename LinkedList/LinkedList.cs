@@ -35,18 +35,18 @@ namespace LinkedList
         #endregion
 
         #region Events
-        public event Action<LinkedListNode<T>> EventAdd = delegate { };  // shall i use EventHandler?
-        public event Action<LinkedListNode<T>> EventRemove = delegate { };
+        public event EventHandler<LinkedListNode<T>> EventAdd = delegate { };  // shall i use EventHandler?
+        public event EventHandler<LinkedListNode<T>> EventRemove = delegate { };
         public event Action EventClear = delegate { };
 
         protected virtual void OnAdd(LinkedListNode<T> element)
         {
-            EventAdd.Invoke(element);
+            EventAdd.Invoke(this, element);
         }
 
         protected virtual void OnRemove(LinkedListNode<T> element)
         {
-            EventRemove.Invoke(element);
+            EventRemove.Invoke(this, element);
         }
 
         protected virtual void OnClear()

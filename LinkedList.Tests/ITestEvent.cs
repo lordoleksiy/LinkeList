@@ -8,7 +8,7 @@ namespace LinkedList.Tests
 {
     public interface ITestEvent<T>
     {
-        void testOneArgumentEvent(LinkedListNode<T> element);
+        void testOneArgumentEvent(object obj, LinkedListNode<T> element);
         void testNoArgumentEvent();
     }
 }

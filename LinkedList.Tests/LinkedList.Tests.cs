@@ -36,28 +36,44 @@ namespace LinkedList.Tests
         public void EventClear_ClearCollectionAndCheckClearEventIsRaised_EventClearIsRaised()
         {
             LinkedList<int> list = new(1, 2, 3);
-            using var monitoredEvent = list.Monitor();
+            using var monitoredEvents = list.Monitor();
             ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
 
             list.EventClear += fakeObject.testNoArgumentEvent;
             list.Clear();
 
-            monitoredEvent.Should().Raise("EventClear");
+            monitoredEvents.Should().Raise("EventClear");
         }
 
-        //[Test]
-        //public void EventAdd_AddNumToCollectionAndMonitorEventIsRaisedAndArgTIsChanged_EventISRaisedArgChanged()
-        //{
-        //    LinkedList<int> list = new();
-        //    using var monitoredEvent = list.Monitor();
-        //    ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
+        [Test]
+        public void EventAdd_AddNumToCollectionAndMonitorEventIsRaisedAndArgCorrect_EventISRaisedArgCorrect()
+        {
+            LinkedList<int> list = new();
+            using var monitoredEvents = list.Monitor();
+            ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
+            int expected = 2;
 
-        //    list.EventAdd += fakeObject.testOneArgumentEvent;
-        //    list.Add(2);
+            list.EventAdd += fakeObject.testOneArgumentEvent;
+            list.Add(expected);
 
-        //    monitoredEvent.Should().Raise("EventAdd")
-        //        .WithArgs<ITestEvent<int>.testOneArgumentEvent>(args => args.PropertyName == "element");
-        //}
+            monitoredEvents.Should().Raise("EventAdd")
+                .WithArgs<LinkedListNode<int>>(args => args.Value == expected);
+        }
+
+        [Test]
+        public void EventRemove_RemoveNumFromCollectionAndMonitorEventIsRaisedAndArgCorrect_EventISRaisedArgCorrect()
+        {
+            LinkedList<int> list = new(6, 2, 4, 6, 1);
+            using var monitoredEvents = list.Monitor();
+            ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
+            int expected = 2;
+
+            //list.EventRemove += fakeObject.testOneArgumentEvent;
+            list.Remove(expected);
+
+            monitoredEvents.Should().Raise("EventRemove")
+                .WithArgs<LinkedListNode<int>>(args => args.Value == expected);
+        }
         #endregion
 
         #region ICollectionT
