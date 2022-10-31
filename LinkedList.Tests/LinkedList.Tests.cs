@@ -3,7 +3,6 @@ using LinkedList;
 using System;
 using FluentAssertions;
 using System.Collections;
-using Moq;
 
 namespace LinkedList.Tests
 {
@@ -37,9 +36,7 @@ namespace LinkedList.Tests
         {
             LinkedList<int> list = new(1, 2, 3);
             using var monitoredEvents = list.Monitor();
-            ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
 
-            list.EventClear += fakeObject.testNoArgumentEvent;
             list.Clear();
 
             monitoredEvents.Should().Raise("EventClear");
@@ -50,10 +47,8 @@ namespace LinkedList.Tests
         {
             LinkedList<int> list = new();
             using var monitoredEvents = list.Monitor();
-            ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
             int expected = 2;
 
-            list.EventAdd += fakeObject.testOneArgumentEvent;
             list.Add(expected);
 
             monitoredEvents.Should().Raise("EventAdd")
@@ -65,10 +60,8 @@ namespace LinkedList.Tests
         {
             LinkedList<int> list = new(6, 2, 4, 6, 1);
             using var monitoredEvents = list.Monitor();
-            ITestEvent<int> fakeObject = Mock.Of<ITestEvent<int>>();
             int expected = 2;
 
-            //list.EventRemove += fakeObject.testOneArgumentEvent;
             list.Remove(expected);
 
             monitoredEvents.Should().Raise("EventRemove")
