@@ -110,11 +110,11 @@ namespace ConsoleTestApp
         }
 
         // methods for events:
-        private static void Added(LinkedListNode<int> item)
+        private static void Added(object sender, LinkedListNode<int> item)
         {
             Console.WriteLine($"{item.Value} is Added!");
         }
-        private static void Removed(LinkedListNode<int> item)
+        private static void Removed(object sender, LinkedListNode<int> item)
         {
             Console.WriteLine($"{item.Value} is Removed!");
         }
