@@ -52,6 +52,7 @@ namespace LinkedList.Tests
             list.Add(expected);
 
             monitoredEvents.Should().Raise("EventAdd")
+                .WithSender(list)
                 .WithArgs<LinkedListNode<int>>(args => args.Value == expected);
         }
 
@@ -65,6 +66,7 @@ namespace LinkedList.Tests
             list.Remove(expected);
 
             monitoredEvents.Should().Raise("EventRemove")
+                .WithSender(list)
                 .WithArgs<LinkedListNode<int>>(args => args.Value == expected);
         }
         #endregion
